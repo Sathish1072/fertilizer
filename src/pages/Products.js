@@ -13,14 +13,12 @@ import {
   Chip,
   InputAdornment,
   Rating,
-  IconButton,
   Snackbar,
   Alert,
 } from '@mui/material';
 import {
   Search,
   ShoppingCart,
-  Add,
 } from '@mui/icons-material';
 import { fertilizerProducts, categories } from '../data/products';
 import { useCart } from '../context/CartContext';
