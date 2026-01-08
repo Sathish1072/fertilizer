@@ -1,3 +1,7 @@
 # https://www.robotstxt.org/robotstxt.html
+# Sathish Fertilizer - Ariyalur & Sendurai's Trusted Fertilizer Supplier
 User-agent: *
-Disallow:
+Allow: /
+Sitemap: https://fertilizer.vercel.app/sitemap.xml
+
+# Optimized for search engines to index our fertilizer products

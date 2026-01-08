@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#66bb6a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2e7d32;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="192" height="192" fill="url(#bgGradient)" rx="40"/>
+  
+  <!-- Plant/Seedling Icon -->
+  <g transform="translate(96, 96)">
+    <!-- Pot -->
+    <path d="M -35 30 L -25 60 L 25 60 L 35 30 Z" fill="#795548" opacity="0.9"/>
+    <rect x="-40" y="25" width="80" height="8" fill="#8d6e63" rx="2"/>
+    
+    <!-- Soil -->
+    <ellipse cx="0" cy="30" rx="35" ry="8" fill="#5d4037"/>
+    
+    <!-- Left Leaf -->
+    <path d="M 0 0 Q -30 -10, -40 -35 Q -35 -25, 0 0" fill="#81c784" opacity="0.95">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="-5 0 0" dur="2s" repeatCount="indefinite" direction="alternate"/>
+    </path>
+    
+    <!-- Right Leaf -->
+    <path d="M 0 0 Q 30 -10, 40 -35 Q 35 -25, 0 0" fill="#66bb6a" opacity="0.95">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="5 0 0" dur="2s" repeatCount="indefinite" direction="alternate"/>
+    </path>
+    
+    <!-- Center Sprout -->
+    <path d="M 0 -5 Q -5 -25, 0 -45 Q 5 -25, 0 -5" fill="#4caf50" opacity="0.95"/>
+    
+    <!-- Stem -->
+    <rect x="-2" y="0" width="4" height="35" fill="#558b2f" rx="2"/>
+  </g>
+  
+  <!-- Sparkle effects -->
+  <circle cx="50" cy="50" r="3" fill="#ffffff" opacity="0.7">
+    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="140" cy="60" r="2" fill="#ffffff" opacity="0.6">
+    <animate attributeName="opacity" values="0.2;0.7;0.2" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="160" cy="130" r="2.5" fill="#ffffff" opacity="0.5">
+    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="3.5s" repeatCount="indefinite"/>
+  </circle>
+</svg>
