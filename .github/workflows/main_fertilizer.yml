@@ -1,4 +1,4 @@
-name: Build and deploy React app to Azure Web App - fertilizer
+name: Build and deploy Node.js app to Azure Web App - fertilizer
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: react-build
+          name: node-app
           path: build
 
   deploy:
@@ -39,8 +39,8 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: react-build
-          path: build
+          name: node-app
+          path: .
       
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
