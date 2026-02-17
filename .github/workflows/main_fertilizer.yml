@@ -1,4 +1,4 @@
-name: Build and deploy Node.js app to Azure Web App - fertilizer
+name: Build and deploy React app to Azure Web App - fertilizer
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
+          name: react-build
           path: build
 
   deploy:
@@ -39,13 +39,13 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: node-app
-          path: .
+          name: react-build
+          path: build
       
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'fertilizer'
           slot-name: 'Production'
-          package: .
+          package: ./build
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5B31C98BE69C47828536766B058B53EE }}
