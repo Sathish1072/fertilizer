@@ -21,33 +21,44 @@ export const CartProvider = ({ children }) => {
   }, [cartItems]);
 
   const addToCart = (product) => {
+    const targetId = String(product._id || product.id);
+    const normalizedProduct = {
+      ...product,
+      id: targetId,
+      _id: targetId,
+    };
+
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
+      const existingItem = prevItems.find(
+        (item) => String(item.id || item._id) === targetId
+      );
       if (existingItem) {
         return prevItems.map((item) =>
-          item.id === product.id
+          String(item.id || item._id) === targetId
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+      return [...prevItems, { ...normalizedProduct, quantity: 1 }];
     });
   };
 
   const removeFromCart = (productId) => {
+    const targetId = String(productId);
     setCartItems((prevItems) =>
-      prevItems.filter((item) => item.id !== productId)
+      prevItems.filter((item) => String(item.id || item._id) !== targetId)
     );
   };
 
   const updateQuantity = (productId, quantity) => {
+    const targetId = String(productId);
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(targetId);
       return;
     }
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
+        String(item.id || item._id) === targetId ? { ...item, quantity } : item
       )
     );
   };
@@ -58,13 +69,13 @@ export const CartProvider = ({ children }) => {
 
   const getCartTotal = () => {
     return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
+      (total, item) => total + Number(item.price) * Number(item.quantity),
       0
     );
   };
 
   const getCartCount = () => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
+    return cartItems.reduce((count, item) => count + Number(item.quantity), 0);
   };
 
   const value = {

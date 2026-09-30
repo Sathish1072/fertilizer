@@ -10,8 +10,11 @@ import {
   Link,
   InputAdornment,
   IconButton,
+  Divider,
+  Chip,
+  CircularProgress,
 } from '@mui/material';
-import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Login as LoginIcon, Agriculture, AdminPanelSettings } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,6 +26,8 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -51,7 +56,6 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear error for this field
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -61,14 +65,48 @@ const Login = () => {
     setLoginError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      const result = login(formData.email, formData.password);
+      setLoading(true);
+      setLoginError('');
+      const result = await login(formData.email, formData.password);
+      setLoading(false);
       if (result.success) {
-        navigate('/products');
+        if (result.user?.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/products');
+        }
       } else {
-        setLoginError('Invalid email or password');
+        setLoginError(result.message || 'Invalid email or password');
+      }
+    }
+  };
+
+  const handleQuickDemo = async (role) => {
+    setLoading(true);
+    setLoginError('');
+    let email = '';
+    let pass = '';
+
+    if (role === 'admin') {
+      email = 'admin@fertilizershop.com';
+      pass = 'Admin@123';
+    } else {
+      email = 'farmer@demo.com';
+      pass = 'Farmer@123';
+    }
+
+    setFormData({ email, password: pass });
+    const result = await login(email, pass);
+    setLoading(false);
+
+    if (result.success) {
+      if (role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/products');
       }
     }
   };
@@ -92,19 +130,57 @@ const Login = () => {
             background: 'white',
           }}
         >
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Box sx={{ textAlign: 'center', mb: 3 }}>
             <Typography
               variant="h4"
               component="h1"
               gutterBottom
-              sx={{ fontWeight: 700, color: 'primary.main' }}
+              sx={{ fontWeight: 800, color: 'primary.main' }}
             >
-              🌱 Welcome Back
+              🌱 FertilizerShop
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Login to your FertilizerShop account
+              Sign in to manage your orders & farm agricultural supplies
             </Typography>
           </Box>
+
+          {/* Quick Demo Section for Client Evaluation */}
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 2,
+              mb: 3,
+              bgcolor: '#f1f8e9',
+              borderColor: '#a5d6a7',
+              borderRadius: 2,
+            }}
+          >
+            <Typography variant="caption" sx={{ fontWeight: 700, color: 'primary.dark', display: 'block', mb: 1, textTransform: 'uppercase' }}>
+              ⚡ 1-Click Evaluation Logins (Client / Reviewer)
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              <Button
+                variant="contained"
+                size="small"
+                color="primary"
+                startIcon={<Agriculture />}
+                onClick={() => handleQuickDemo('farmer')}
+                disabled={loading}
+              >
+                Farmer Demo
+              </Button>
+              <Button
+                variant="contained"
+                size="small"
+                color="secondary"
+                startIcon={<AdminPanelSettings />}
+                onClick={() => handleQuickDemo('admin')}
+                disabled={loading}
+              >
+                Store Admin Demo
+              </Button>
+            </Box>
+          </Paper>
 
           {loginError && (
             <Alert severity="error" sx={{ mb: 3 }}>
@@ -124,7 +200,6 @@ const Login = () => {
               helperText={errors.email}
               margin="normal"
               autoComplete="email"
-              autoFocus
             />
 
             <TextField
@@ -157,15 +232,11 @@ const Login = () => {
               fullWidth
               variant="contained"
               size="large"
-              startIcon={<LoginIcon />}
-              sx={{
-                mt: 3,
-                mb: 2,
-                py: 1.5,
-                fontSize: '1.1rem',
-              }}
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <LoginIcon />}
+              sx={{ mt: 3, mb: 2, py: 1.5 }}
             >
-              Login
+              {loading ? 'Signing in...' : 'Sign In'}
             </Button>
 
             <Box sx={{ textAlign: 'center', mt: 2 }}>
@@ -173,25 +244,16 @@ const Login = () => {
                 Don't have an account?{' '}
                 <Link
                   component="button"
+                  type="button"
                   variant="body2"
                   onClick={() => navigate('/signup')}
-                  sx={{
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                    color: 'primary.main',
-                  }}
+                  sx={{ fontWeight: 600 }}
                 >
-                  Sign up here
+                  Create Farmer Account
                 </Link>
               </Typography>
             </Box>
           </form>
-
-          <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-            <Typography variant="caption" color="text.secondary" align="center" display="block">
-              🌾 Demo: Use any email and password (min 6 characters)
-            </Typography>
-          </Box>
         </Paper>
       </Container>
     </Box>

@@ -27,8 +27,14 @@ const Profile = () => {
   const profileInfo = [
     { icon: <Person />, label: 'Name', value: user?.name || 'N/A' },
     { icon: <Email />, label: 'Email', value: user?.email || 'N/A' },
-    { icon: <Phone />, label: 'Phone', value: '+91 98765 43210' },
-    { icon: <HomeIcon />, label: 'Address', value: 'Sample Address, City, State' },
+    { icon: <Phone />, label: 'Phone', value: user?.phone || 'Not provided' },
+    {
+      icon: <HomeIcon />,
+      label: 'Address',
+      value: user?.address?.street
+        ? `${user.address.street}, ${user.address.city}, ${user.address.state} - ${user.address.pincode}`
+        : 'Farm address not configured yet',
+    },
   ];
 
   return (

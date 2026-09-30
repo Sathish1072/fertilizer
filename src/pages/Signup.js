@@ -6,9 +6,11 @@ import {
   Button,
   Typography,
   Paper,
+  Alert,
   Link,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import { Visibility, VisibilityOff, PersonAdd } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -18,12 +20,16 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: '',
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [signupError, setSignupError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const { signup } = useAuth();
 
@@ -31,9 +37,7 @@ const Signup = () => {
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    } else if (formData.name.length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
+      newErrors.name = 'Full name is required';
     }
 
     if (!formData.email) {
@@ -64,20 +68,27 @@ const Signup = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear error for this field
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
         [name]: '',
       }));
     }
+    setSignupError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      signup(formData.name, formData.email, formData.password);
-      navigate('/products');
+      setLoading(true);
+      setSignupError('');
+      const res = await signup(formData.name, formData.email, formData.password, formData.phone);
+      setLoading(false);
+      if (res.success) {
+        navigate('/products');
+      } else {
+        setSignupError(res.message || 'Registration failed');
+      }
     }
   };
 
@@ -105,27 +116,31 @@ const Signup = () => {
               variant="h4"
               component="h1"
               gutterBottom
-              sx={{ fontWeight: 700, color: 'primary.main' }}
+              sx={{ fontWeight: 800, color: 'primary.main' }}
             >
-              🌱 Create Account
+              🌱 Join FertilizerShop
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Join FertilizerShop today
+              Create an account to purchase verified fertilizers directly
             </Typography>
           </Box>
+
+          {signupError && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {signupError}
+            </Alert>
+          )}
 
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label="Full Name"
+              label="Full Name / Farm Name"
               name="name"
               value={formData.name}
               onChange={handleChange}
               error={!!errors.name}
               helperText={errors.name}
               margin="normal"
-              autoComplete="name"
-              autoFocus
             />
 
             <TextField
@@ -138,12 +153,21 @@ const Signup = () => {
               error={!!errors.email}
               helperText={errors.email}
               margin="normal"
-              autoComplete="email"
             />
 
             <TextField
               fullWidth
-              label="Password"
+              label="Mobile Number"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              margin="normal"
+              placeholder="e.g. 9845012345"
+            />
+
+            <TextField
+              fullWidth
+              label="Password (min 6 chars)"
               name="password"
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
@@ -151,7 +175,6 @@ const Signup = () => {
               error={!!errors.password}
               helperText={errors.password}
               margin="normal"
-              autoComplete="new-password"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -176,7 +199,6 @@ const Signup = () => {
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword}
               margin="normal"
-              autoComplete="new-password"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -196,15 +218,11 @@ const Signup = () => {
               fullWidth
               variant="contained"
               size="large"
-              startIcon={<PersonAdd />}
-              sx={{
-                mt: 3,
-                mb: 2,
-                py: 1.5,
-                fontSize: '1.1rem',
-              }}
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <PersonAdd />}
+              sx={{ mt: 3, mb: 2, py: 1.5 }}
             >
-              Sign Up
+              {loading ? 'Creating Account...' : 'Register Account'}
             </Button>
 
             <Box sx={{ textAlign: 'center', mt: 2 }}>
@@ -212,15 +230,12 @@ const Signup = () => {
                 Already have an account?{' '}
                 <Link
                   component="button"
+                  type="button"
                   variant="body2"
                   onClick={() => navigate('/login')}
-                  sx={{
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                    color: 'primary.main',
-                  }}
+                  sx={{ fontWeight: 600 }}
                 >
-                  Login here
+                  Sign In
                 </Link>
               </Typography>
             </Box>
