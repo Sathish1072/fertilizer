@@ -1,14 +1,33 @@
 import axios from 'axios';
 
-// Detect API base URL: directly use http://localhost:5000/api in local development
+// Detect API base URL dynamically
 const getApiBase = () => {
+  const envUrl = process.env.REACT_APP_API_URL;
+
   if (typeof window !== 'undefined' && window.location) {
     const { hostname, port } = window.location;
-    if ((hostname === 'localhost' || hostname === '127.0.0.1') && port !== '5000') {
-      return 'http://localhost:5000/api';
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+
+    // 1. If running locally on laptop
+    if (isLocalhost) {
+      if (port === '5000') return '/api';
+      return envUrl || 'http://localhost:5000/api';
     }
+
+    // 2. If running on a live production domain (Azure, Render, Vercel, etc.)
+    // If an external live backend URL is provided (not localhost), use it
+    if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+      return envUrl.endsWith('/') ? envUrl.slice(0, -1) : envUrl;
+    }
+
+    // Otherwise, default to relative '/api' on the same production domain
+    return '/api';
   }
-  return process.env.REACT_APP_API_URL || '/api';
+
+  if (envUrl && !envUrl.includes('localhost')) {
+    return envUrl;
+  }
+  return '/api';
 };
 
 const API_BASE = getApiBase();
