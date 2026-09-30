@@ -26,9 +26,7 @@ import {
   Payment,
   CheckCircle,
   CreditCard,
-  AccountBalance,
   Money,
-  Discount,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';

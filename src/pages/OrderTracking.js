@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Box,
@@ -11,8 +11,6 @@ import {
   Button,
   Chip,
   Grid,
-  Card,
-  CardContent,
   Divider,
   CircularProgress,
 } from '@mui/material';
@@ -23,7 +21,6 @@ import {
   Home as HomeIcon,
   Receipt,
   ArrowBack,
-  Store,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -35,11 +32,7 @@ const OrderTracking = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchOrderDetails();
-  }, [orderId]);
-
-  const fetchOrderDetails = async () => {
+  const fetchOrderDetails = useCallback(async () => {
     setLoading(true);
     try {
       const res = await ordersAPI.getById(orderId);
@@ -72,7 +65,12 @@ const OrderTracking = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId]);
+
+  useEffect(() => {
+    fetchOrderDetails();
+  }, [fetchOrderDetails]);
+
 
   const getActiveStepIndex = (status) => {
     switch (status) {

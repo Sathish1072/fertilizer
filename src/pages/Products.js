@@ -28,7 +28,6 @@ import {
   ShoppingCart,
   FilterList,
   InfoOutlined,
-  CheckCircle,
 } from '@mui/icons-material';
 import { categories } from '../data/products';
 import { useCart } from '../context/CartContext';
@@ -48,6 +47,7 @@ const Products = () => {
 
   useEffect(() => {
     loadProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, sortBy]);
 
   const loadProducts = async () => {

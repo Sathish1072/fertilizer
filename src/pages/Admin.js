@@ -40,16 +40,12 @@ import {
   Delete,
   Visibility,
   Storage,
-  CheckCircle,
-  Warning,
 } from '@mui/icons-material';
 import Layout from '../components/Layout';
 import { adminAPI, productsAPI, ordersAPI, healthAPI } from '../services/api';
-import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Admin = () => {
-  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState(0);
 
@@ -83,6 +79,7 @@ const Admin = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboardData = async () => {
